@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { getDictionary } from "@infrastructure/i18n/get-directory";
-import { Locale } from "@shared/i18n";
+import { getDictionary, ILocale } from "@infrastructure/i18n/get-dictionary";
 
 export default async function Home({
   params,
@@ -8,7 +7,7 @@ export default async function Home({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const dict = await getDictionary(lang as Locale);
+  const dict = await getDictionary(lang as ILocale);
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">

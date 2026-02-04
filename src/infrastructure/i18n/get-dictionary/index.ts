@@ -3,8 +3,8 @@ const dictionaries = {
   vi: () => import('@shared/locales/vi').then((m) => m.default),
 };
 
-export type Locale = keyof typeof dictionaries;
+export type ILocale = keyof typeof dictionaries;
 
-export const getDictionary = async (locale: Locale) => {
+export const getDictionary = async (locale: ILocale) => {
   return dictionaries[locale] ? dictionaries[locale]() : dictionaries.en();
 };
