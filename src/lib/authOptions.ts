@@ -1,4 +1,4 @@
-import { ROUTES } from "@/routes";
+import { ROUTES } from "@infrastructure/constants/routes";
 import { AuthError } from "@constants/errors";
 import NextAuth, { NextAuthOptions, SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";

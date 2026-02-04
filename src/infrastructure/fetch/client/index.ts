@@ -1,5 +1,5 @@
 import envConfig from "@infrastructure/constants/env";
-import { COOKIES } from "@constants/common";
+import { COOKIE_KEYS } from "@infrastructure/constants/cookieKey";  
 import { cookies } from "next/headers";
 
 type CustomOptions = RequestInit & {
@@ -13,7 +13,7 @@ const request = async <Response>(
 ) => {
     const isFormData = options.body instanceof FormData;
     const cookieStore = await cookies();
-    const accessToken = cookieStore.get(COOKIES.ACCESS_TOKEN)?.value;
+    const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
     const headers = {
         ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
