@@ -1,4 +1,5 @@
 const AUTH = {
+    ROOT: '/auth',
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
     FORGOT_PASSWORD: '/auth/forgot-password',
@@ -9,6 +10,17 @@ const AUTH = {
     LOGOUT: '/logout',
 };
 
+const ADMIN = {
+    ROOT: '/admin',
+}
+
+const PUBLIC = {
+    ROOT: '/',
+    NOT_FOUND: '/not-found',
+}
+
 export const ROUTES = {
     AUTH,
+    PUBLIC,
+    ADMIN,
 };

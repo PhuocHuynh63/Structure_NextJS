@@ -1,60 +1,62 @@
-// File: src/middleware.ts (Phiên bản cuối cùng, xử lý được route động)
-
-import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
-import { ROUTES } from './routes';
-import { ROLE } from '@constants/common';
-import { handleStatus } from '@middlewares/status';
-
-// DANH SÁCH CÁC TIỀN TỐ CẦN ĐƯỢC BẢO VỆ (YÊU CẦU ĐĂNG NHẬP)
-const PROTECTED_PREFIXES = [
-    ROUTES.ADMIN.ROOT,
-    ROUTES.STAFF.ROOT,
-    ROUTES.VENDOR.ROOT,
-    ROUTES.USER.PROFILE.INFO,
-    ROUTES.USER.CHAT_ROOT,
-    ROUTES.USER.CHECKOUT
-];
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { ROLE } from "@constants/common";
+import { ROUTES } from "@routes";
 
 export async function middleware(req: NextRequest) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
     const { pathname } = req.nextUrl;
 
-    const paymentErrorResponse = handleStatus(req);
-    if (paymentErrorResponse) return paymentErrorResponse;
+    /**
+     * Lấy role từ token
+     * @description: Tuỳ vào backend trả ID hay tên role
+     * @example:
+     * - Trả ID: 1 => ROLE.ADMIN
+     * - Trả tên role: 'admin' => ROLE.ADMIN
+     * - Trả ID: 2 => ROLE.CUSTOMER
+     * - Trả tên role: 'customer' => ROLE.CUSTOMER
+     */
+    const userRole = token ? String((token as any)?.role) : null;
+    const isAdmin = userRole === String(ROLE.ADMIN); //TODO: Tuỳ vào backend trả ID hay tên role
+    const isCustomer = userRole === String(ROLE.CUSTOMER); //TODO: Tuỳ vào backend trả ID hay tên role
+    //-----------------End-----------------//
 
-    const isProtectedRoute = PROTECTED_PREFIXES.some(prefix => pathname.startsWith(prefix));
 
-    if (!isProtectedRoute) {
-        return NextResponse.next();
+    // Protect all admin routes - only admins can access
+    if (pathname.startsWith(ROUTES.ADMIN.ROOT)) {
+        if (!token || !isAdmin) {
+            return NextResponse.redirect(new URL(ROUTES.PUBLIC.NOT_FOUND, req.url));
+        }
     }
 
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    // Redirect authenticated users away from auth pages
+    if (token && pathname.startsWith(ROUTES.AUTH.ROOT)) {
+        // Redirect based on role
+        if (isAdmin) {
+            return NextResponse.redirect(new URL(ROUTES.ADMIN.ROOT, req.url));
+        } else if (isCustomer) {
+            return NextResponse.redirect(new URL(ROUTES.PUBLIC.ROOT, req.url));
+        }
+    }
 
-
+    // Redirect unauthenticated users to login for protected routes
     if (!token) {
-        const loginUrl = new URL(ROUTES.AUTH.LOGIN, req.url);
-        return NextResponse.redirect(loginUrl);
-    }
+        const publicStaticPaths = [ROUTES.PUBLIC.ROOT];
+        const publicPrefixPaths = [ROUTES.AUTH.ROOT];
 
-    const userRole = (token as any).role?.name;
+        const isPublicPath =
+            publicStaticPaths.includes(pathname) ||
+            publicPrefixPaths.some((prefix) => pathname.startsWith(prefix))
 
-    if (pathname.startsWith(ROUTES.ADMIN.ROOT) && userRole !== ROLE.ADMIN) {
-        return NextResponse.redirect(new URL(ROUTES.PUBLIC.HOME, req.url));
-    }
-
-    if (pathname.startsWith(ROUTES.STAFF.ROOT) && userRole !== ROLE.STAFF) {
-        return NextResponse.redirect(new URL(ROUTES.PUBLIC.HOME, req.url));
-    }
-
-    if (pathname.startsWith(ROUTES.VENDOR.ROOT) && userRole !== ROLE.VENDOR_OWNER) {
-        return NextResponse.redirect(new URL(ROUTES.PUBLIC.HOME, req.url));
+        if (!isPublicPath) {
+            return NextResponse.redirect(new URL(ROUTES.AUTH.LOGIN, req.url));
+        }
     }
 
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: [
-        '/((?!api|_next/static|_next/image|favicon.ico|auth).*)',
-    ],
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
