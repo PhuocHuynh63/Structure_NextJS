@@ -1,9 +1,9 @@
 import { ROUTES } from "@/routes";
 import { AuthError } from "@constants/errors";
-import authService from "@services/auth";
 import NextAuth, { NextAuthOptions, SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
+import authService from "@features/auth/service";
 
 
 export const authOptions: NextAuthOptions = {
