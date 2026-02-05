@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import I18nProvider from "@components/Organisms/I18nProvider";
 import { ILocale } from "@infrastructure/i18n/get-dictionary";
 import { getDictionary } from "@infrastructure/i18n/get-dictionary";
