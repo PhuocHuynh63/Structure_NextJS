@@ -4,6 +4,7 @@ import "../globals.css";
 import I18nProvider from "@components/Organisms/I18nProvider";
 import { ILocale } from "@infrastructure/i18n/get-dictionary";
 import { getDictionary } from "@infrastructure/i18n/get-dictionary";
+import TanstackProvider from "@components/Organisms/TanstackProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,7 +37,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <I18nProvider lang={lang as ILocale} resources={dict}>
-          {children}
+          <TanstackProvider>
+            {children}
+          </TanstackProvider>
         </I18nProvider>
       </body>
     </html>

@@ -12,9 +12,9 @@ const configProject = configShema.safeParse({
     WEBSOCKET_URL: process.env.WEBSOCKET_URL,
 })
 
-// if (!configProject.success) {
-//     throw new Error('The value of the environment variable is not valid')
-// }
+if (!configProject.success) {
+    throw new Error('The value of the environment variable is not valid')
+}
 
 const envConfig = configProject.data
 export default envConfig
