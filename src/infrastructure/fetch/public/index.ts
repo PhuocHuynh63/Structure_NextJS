@@ -29,7 +29,7 @@ const request = async <Response>(
     return await res.json() as Response;
 };
 
-const fetchInternal = {
+const fetchPublic = {
     get: <T>(url: string, options?: Omit<CustomOptions, "body">) => request<T>("GET", url, options),
     post: <T>(url: string, body: any, options?: Omit<CustomOptions, "body">) => request<T>("POST", url, { ...options, body }),
     put: <T>(url: string, body: any, options?: Omit<CustomOptions, "body">) => request<T>("PUT", url, { ...options, body }),
@@ -37,4 +37,4 @@ const fetchInternal = {
     delete: <T>(url: string, body: any, options?: Omit<CustomOptions, "body">) => request<T>("DELETE", url, { ...options, body }),
 };
 
-export default fetchInternal;
+export default fetchPublic;

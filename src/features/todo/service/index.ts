@@ -1,8 +1,8 @@
-import fetchInternal from "@infrastructure/fetch/internal"
+import fetchPublic from "@infrastructure/fetch/public"
 
 const todoService = {
     getTodos: async () => {
-        return await fetchInternal.get('/todos')
+        return await fetchPublic.get('/todos')
     }
 }
 
