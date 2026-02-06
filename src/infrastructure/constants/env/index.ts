@@ -1,15 +1,15 @@
 import { z } from 'zod'
 
 const configShema = z.object({
-    API_URL: z.string(),
-    INTERNAL_API_TOKEN: z.string(),
-    WEBSOCKET_URL: z.string(),
+    API_URL: z.string().optional(),
+    INTERNAL_API_TOKEN: z.string().optional(),
+    WEBSOCKET_URL: z.string().optional(),
 })
 
 const configProject = configShema.safeParse({
-    API_URL: process.env.API_URL,
-    INTERNAL_API_TOKEN: process.env.INTERNAL_API_TOKEN,
-    WEBSOCKET_URL: process.env.WEBSOCKET_URL,
+    API_URL: process.env.NEXT_PUBLIC_API_URL,
+    INTERNAL_API_TOKEN: process.env.INTERNAL_API_TOKEN ?? '',
+    WEBSOCKET_URL: process.env.WEBSOCKET_URL ?? '',
 })
 
 if (!configProject.success) {
