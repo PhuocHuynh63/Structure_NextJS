@@ -1,6 +1,6 @@
 import envConfig from "@infrastructure/constants/env";
-import { COOKIE_KEYS } from "@infrastructure/constants/cookieKey";
-import { cookies } from "next/headers";
+import { authOptions } from "@infrastructure/libs/nextAuth";
+import { getServerSession } from "next-auth";
 
 type CustomOptions = RequestInit & {
     baseUrl?: string;
@@ -12,8 +12,12 @@ const request = async <Response>(
     options: CustomOptions = {}
 ) => {
     const isFormData = options.body instanceof FormData;
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
+
+    let accessToken = "";
+    if (typeof window === 'undefined') {
+        const session = await getServerSession(authOptions);
+        accessToken = session?.accessToken || "";
+    }
 
     const headers = {
         ...(isFormData ? {} : { 'Content-Type': 'application/json' }),

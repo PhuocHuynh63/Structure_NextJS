@@ -1,3 +1,5 @@
+'use server';
+
 import { revalidateTag } from "next/cache";
 import todoService from "@features/todo/service"
 import { todoKeys } from "@features/todo/queries/keys";

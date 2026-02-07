@@ -1,7 +1,8 @@
 'use client'
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { todoOptions } from "@features/todo/queries/options";
+import { todoKeys } from "@features/todo/queries/keys";
 
 export function useTodo() {
     /**
@@ -11,5 +12,14 @@ export function useTodo() {
 }
 
 export function useCreateTodo() {
-    return useMutation(todoOptions.create())
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        ...todoOptions.create(),
+        onSuccess: (res: any) => {
+            if (res.success) {
+                queryClient.invalidateQueries({ queryKey: [todoKeys.all] });
+            }
+        }
+    });
 }

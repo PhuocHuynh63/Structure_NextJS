@@ -1,5 +1,4 @@
 import { ROUTES } from "@infrastructure/constants/routes";
-import { AuthError } from "@constants/errors";
 import NextAuth, { NextAuthOptions, SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
@@ -35,27 +34,25 @@ export const authOptions: NextAuthOptions = {
                     password: credentials.password,
                 }) as { statusCode: number; data: any; message: string };
 
-                switch (res.statusCode) {
-                    case 404:
-                        throw new Error(res.message || AuthError.USER_NOT_FOUND);
-                    case 400:
-                        throw new Error(res.message || AuthError.WRONG_CREDENTIALS);
-                    case 401:
-                        throw new Error(res.message || AuthError.INACTIVE);
-                    case 200:
-                    case 201:
-                        break;
+                // switch (res.statusCode) {
+                //     case 404:
+                //         throw new Error(res.message || AuthError.USER_NOT_FOUND);
+                //     case 400:
+                //         throw new Error(res.message || AuthError.WRONG_CREDENTIALS);
+                //     case 401:
+                //         throw new Error(res.message || AuthError.INACTIVE);
+                //     case 200:
+                //     case 201:
+                //         break;
 
-                    default:
-                        throw new Error(res.message || "Đăng nhập thất bại");
-                }
+                //     default:
+                //         throw new Error(res.message || "Đăng nhập thất bại");
+                // }
                 const user = {
                     id: res.data.user.id,
                     email: res.data.user.email,
                     role: res.data.user.role,
                     accessToken: res.data.access_token,
-                    cartId: res.data.user.cartId,
-                    wishlistId: res.data.user.wishlistId,
                 }
 
                 return user;
@@ -68,16 +65,12 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
                 token.role = user.role;
                 token.accessToken = user.accessToken;
-                token.cartId = user.cartId;
-                token.wishlistId = user.wishlistId;
             }
             return token;
         },
         async session({ session, token }: any) {
             session.user.id = token.id;
             session.user.role = token.role;
-            session.user.cartId = token.cartId;
-            session.user.wishlistId = token.wishlistId;
             (session as any).accessToken = token.accessToken;
             return session;
         },

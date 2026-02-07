@@ -1,9 +1,7 @@
 import todoService from "@features/todo/service";
 import { todoKeys } from "../keys";
-import { UseMutationOptions, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
-import { IBackendResponse } from "@shared/schemas/backend";
-
-const queryClient = useQueryClient();
+import { UseMutationOptions, UseQueryOptions } from "@tanstack/react-query";
+import { createTodoAction } from "@features/todo/action";
 
 export const todoOptions = {
     /**
@@ -16,6 +14,6 @@ export const todoOptions = {
     }),
 
     create: (): UseMutationOptions => ({
-        mutationFn: (data) => todoService.createTodo(data) as Promise<IBackendResponse<any>>,
+        mutationFn: (data) => createTodoAction(data),
     }),
 };
